@@ -12,7 +12,7 @@ const cors = require('cors');
 const app = express();
 
 //Utilisation exterieure via Cors
-app.use(cors({ origin: process.env.CLIENT_URL}));
+app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -20,18 +20,17 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
 //jwt : Verification pour toutes les routes
-app.get('*', checkUser);
+//app.get('*', checkUser);
 app.get('/jwtid', requireAuth, (req, res) => {
     res.status(200).send(res.locals.user._id)
 });
 //Affichage des Utilisateurs
-app.get('/users', requireAuth, userController.getAllUsers);
+app.get('/users', userController.getAllUsers);
 
 //routes
 app.use('/api/user', userRoutes);
 
-
-app.get('/', (req, res)=>res.status(200).send('<h1>Bonjourno</h1>'));
+//app.get('/test', (req, res)=>res.status(200).send('<h1>Bonjourno</h1>'));
 
 //server
 app.listen(process.env.PORT, ()=> console.log("serveur en écoute"));

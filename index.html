@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Page d'Enregistrement Utilisateur</h1>
+    <form id="reg-form">
+        <input type="text" name="" id="username" placeholder="username">
+        <input type="password" name="" id="password" placeholder="password">
+        <input type="email" name="" id="email" placeholder="email">
+        <input type="submit" value="Valider">
+    </form>
+    <div id="textconnect">
+        <input type="button" id="allUsers" value="Users">
+    </div>
+
+    <script>
+        const form = document.getElementById('reg-form')
+        form.addEventListener('submit', registerUser);
+        const button = document.getElementById('allUsers');
+        button.addEventListener('click', allUsers);
+
+        const testtxt = document.getElementById('textconnect');
+        let connected = false;
+
+        async function registerUser(event){
+            event.preventDefault()
+            const username = document.getElementById('username')
+            const email = document.getElementById('email');
+            const password = document.getElementById('password')
+
+
+            const result = await fetch('http://localhost:5500/api/user/register',
+            {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    username:username.value,
+                    email: email.value,
+                    password: password.value
+                    })
+            })
+            .then((res) => res.json());
+            
+            if(result){
+                await fetch('http://localhost:5500/api/user/login',{
+                    method:'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        username:username.value,
+                        email: email.value,
+                        password: password.value
+                        })
+                })
+                .then(res => {
+                    console.log('Vous etes authentifié');
+                    connected = true;
+                    let msgtxt = document.createElement('h2');
+                    msgtxt.innerHTML = "Vous etes connectés"
+                    testtxt.appendChild(msgtxt);
+                }).catch(err => console.log("Erreur d'authentification"));
+                
+            }
+            }
+        
+        async function allUsers(event){
+            // Probleme au niveau de la récuperation de cookie
+                if(connected){     
+                    console.log("Bientot les Users");   
+                    try{           
+                    await fetch('http://localhost:5500/users')
+                        .then(res => res.json())
+                        .then(data => {
+                            let msg = document.createElement('h2');
+                            msg.innerHTML = "Voici la liste des Users"
+                            testtxt.appendChild(msg);
+                            data.forEach(user => {
+                                console.log(user);
+                                let userinf = document.createElement('h3');
+                                userinf.innerHTML = user.username;
+                                testtxt.appendChild(userinf);
+                            });
+                        })
+                        .catch(err => console.log("données pas recues" + err));
+                    }
+                    catch(err){ 
+                        console.log("erreur de fetch"+ err);
+                    }
+                }
+                else console.log("Vous n'etes pas connecté");
+            }
+    </script>
+</body>
+</html>

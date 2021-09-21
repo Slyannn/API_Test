@@ -6,6 +6,7 @@ const UserModel = require('../models/user.model');
 
 module.exports.checkUser = (req, res, next) => {
     const token = req.cookies.jwt;
+    console.log(req);
     if(token) {
         jwt.verify(token, process.env.TOKEN_SECRET, async (err, decodedToken) => {
             if(err) {
@@ -22,7 +23,7 @@ module.exports.checkUser = (req, res, next) => {
         })
     } else {
         res.locals.user = null;
-        console.log('Pas connecté');
+        console.log('Pas connecté parceque pas de Token');
         next();
     }
 }
