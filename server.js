@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cooieParser = require('cookie-parser');
+const cookieParser = require('cookie-parser');
 const userRoutes = require('./routes/user.routes');
 const userController = require('./controllers/user.controller');
 const cookieParser = require('cookie-parser');
